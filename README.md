@@ -1,6 +1,9 @@
 # napr
 
+To establish a connection via R you need to have a a specific back-end for the database that you want to connect to (applies also here). A good starting of what this is all about with additional linkage to useful resources is [Databases using dplyr](https://db.rstudio.com/dplyr).
+
 Installing:
+
 ```r
 devtools::install_github("fishvice/napr")
 ```
@@ -12,8 +15,6 @@ library(ROracle)
 library(napr)
 library(tidyverse)
 ```
-
-Establishing a connection (you need to have odbc for ROracle installed on your computer):
 
 ```r
 con <- nap_connect(username = "youshouldknow", password = "youshouldknow")
@@ -87,7 +88,7 @@ glimpse(d)
 ## $ catch <dbl> 855.160, 2.612, 1122.226, 2168.198, 0.477, 398.000, 5073...
 ```
 
-And do a quickplot:
+And do a quick plot:
 
 
 ```r
