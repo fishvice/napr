@@ -109,3 +109,67 @@ d %>%
 
 ![](fig/catch.png)<!-- -->
 
+```r
+nap_tbl(con, "acoustic") %>% 
+  filter(year == 2017,
+         month %in% c(7, 8)) %>% 
+  collect(n = Inf) %>% 
+  mutate(date = lubridate::ymd_hms(paste0(year, "-", month, "-", day, " ", hour, ":", min, ":00"))) %>% 
+  arrange(vessel, date) %>% 
+  ggplot() +
+  geom_polygon(data = m, aes(long, lat, group = group), fill = "grey") +
+  geom_path(aes(aclon, aclat, colour = as.numeric(date), group = vessel), lwd = 2) +
+  scale_x_continuous(NULL, NULL) +
+  scale_y_continuous(NULL, NULL) +
+  coord_quickmap(xlim = xlim, ylim = ylim) +
+  scale_colour_viridis_c(option = "B", direction = -1) +
+  theme(legend.position = "none") +
+  labs(title = "Seasonal progression")
+```
+
+![](fig/progression.png)<!-- -->
+
+```r
+nap_tbl(con, "acoustic") %>% 
+  filter(year == 2017,
+         month %in% c(7, 8)) %>% 
+  left_join(nap_tbl(con, "acousticvalues") %>% 
+              filter(species == "HER")) %>% 
+  mutate(sa = ifelse(is.na(sa), 0, sa)) %>% 
+  collect(n = Inf) %>% 
+  ggplot() +
+  geom_polygon(data = m, aes(long, lat, group = group),
+               fill = "grey") +
+  geom_point(aes(aclon, aclat, size = sa),
+             colour = "red", alpha = 0.05) +
+  scale_size_area(max_size = 20) +
+  coord_quickmap(xlim = xlim, ylim = ylim) +
+  scale_x_continuous(NULL, NULL) +
+  scale_y_continuous(NULL, NULL) +
+  theme(legend.position = "none") +
+  labs(title = "Herring: Acoustic sa")
+```
+
+![](fig/acoustic.png)<!-- -->
+
+```r
+nap_tbl(con, "plankton") %>% 
+  left_join(nap_logbook(con) %>% 
+              filter(year == 2017, 
+                     month %in% c(7, 8))) %>% 
+  collect(n = Inf) %>% 
+  mutate(sumdrywt = replace_na(sumdrywt, 0)) %>% 
+  ggplot() +
+  geom_polygon(data = m, aes(long, lat, group = group),
+               fill = "grey") +
+  geom_point(aes(lon, lat, size = sumdrywt),
+             colour = "red", alpha = 0.5) +
+  scale_size_area(max_size = 20) +
+  coord_quickmap(xlim = xlim, ylim = ylim) +
+  scale_x_continuous(NULL, NULL) +
+  scale_y_continuous(NULL, NULL) +
+  theme(legend.position = "none") +
+  labs(title = "Plankton: Dry weight")
+```
+
+![](fig/plankton.png)<!-- -->
