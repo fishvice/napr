@@ -130,13 +130,15 @@ nap_tbl(con, "acoustic") %>%
 ![](fig/progression.png)<!-- -->
 
 ```r
-nap_tbl(con, "acoustic") %>% 
+d <-
+  nap_tbl(con, "acoustic") %>% 
   filter(year == 2017,
          month %in% c(7, 8)) %>% 
   left_join(nap_tbl(con, "acousticvalues") %>% 
               filter(species == "HER")) %>% 
   mutate(sa = ifelse(is.na(sa), 0, sa)) %>% 
-  collect(n = Inf) %>% 
+  collect(n = Inf)
+d %>% 
   ggplot() +
   geom_polygon(data = m, aes(long, lat, group = group),
                fill = "grey") +
@@ -151,6 +153,29 @@ nap_tbl(con, "acoustic") %>%
 ```
 
 ![](fig/acoustic.png)<!-- -->
+
+```r
+d %>% 
+  mutate(aclon = gisland::grade(aclon, 2.0),
+         aclat = gisland::grade(aclat, 1.0)) %>% 
+  group_by(aclon, aclat) %>% 
+  summarise(sa = mean(sa, na.rm = TRUE)) %>% 
+  ggplot() +
+  geom_raster(aes(aclon, aclat, fill = sa)) +
+  geom_polygon(data = m, aes(long, lat, group = group),
+               fill = "grey") +
+  geom_point(aes(aclon, aclat, size = sa),
+             colour = "black", shape = 1) +
+  coord_quickmap(xlim = xlim, ylim = ylim) +
+  scale_fill_viridis_c(option = "B", direction = -1) +
+  scale_size_area() +
+  scale_x_continuous(NULL, NULL) +
+  scale_y_continuous(NULL, NULL) +
+  theme(legend.position = "none") +
+  labs(title = "Herring: Acoustic sa")
+```
+
+![](fig/raster.png)<!-- -->
 
 ```r
 nap_tbl(con, "plankton") %>% 
