@@ -1,5 +1,10 @@
 # napr
 
+Installing:
+```r
+devtools::install_github("fishvice/napr")
+```
+
 Shaking hands with North-Atlantic Pelagic Ecosystem Surveys data
 
 ```r
@@ -8,12 +13,27 @@ library(napr)
 library(tidyverse)
 ```
 
+Establishing a connection (you need to have odbc for ROracle installed on your computer):
 
 ```r
 con <- nap_connect(username = "youshouldknow", password = "youshouldknow")
 ```
 
+Generic access to tables can then be established via:
+```r
+nap_tbl(con, "logbook")
+nap_tbl(con, "catch")
+nap_tbl(con, "acoustic")
+nap_tbl(con, "biology")
+nap_tbl(con, "hydrography")
+nap_tbl(con, "plankton")
+nap_tbl(con, "acousticvalues")
+...
+```
 
+There is also a convenient call for the logbook and catch, via the functions nap_logbook and nap_catch.
+
+An example for generating a query:
 ```r
 q <-
   nap_logbook(con) %>% 
