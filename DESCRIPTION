@@ -1,0 +1,19 @@
+Package: napr
+Type: Package
+Title: Communicating with the north-atlantic pelagic database 
+Version: 0.1.0
+Author: Who wrote it
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GPL (>= 3)
+Depends:
+    R (>= 3.1.1)
+Imports:
+    DBI,
+    dplyr,
+    magrittr,
+    ROracle
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
