@@ -13,7 +13,8 @@ Imports:
     DBI,
     dplyr,
     magrittr,
-    ROracle
+    ROracle,
+    tidyr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
