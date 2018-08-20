@@ -36,7 +36,7 @@ nap_tbl(con, "species")
 
 There is also a convenient call for the logbook called nap_logbook and more may be added at later stages.
 
-The nap_lobgook function converts the varible lon, lat, day, hour and min from character to numeric values. A function arguement create_date is also available and if set true (default is false) it returns a datetime-variable (called date) from the time associated varibles when "possible".
+The nap_logbook function converts the variables lon, lat, day, hour and min from character to numeric values. A function arguement create_date is also available and if set true (default is false) it returns a datetime-variable (called date) from the time associated variables when "possible".
 
 An example for generating a query:
 ```r
@@ -112,6 +112,44 @@ d %>%
 ```
 
 ![](fig/catch.png)<!-- -->
+
+The beauty with this interface is that we write code in R, but since the connection is to a database (happens to be Oracle in this case) all the code is automatically transferred to sql. Take e.g. this:
+
+```r
+library(ROracle)
+library(napr)
+library(tidyverse)
+spec_list <- c("MAC","HER","LUM","SAL", "WHB")
+
+con <- nap_connect("youshouldknow", "youshouldknow")
+nap_tbl(con, "biology") %>%
+  filter(year == 2018,
+         species %in% spec_list) %>%
+  left_join(nap_survey(con)) %>%
+  filter(survey == "IESSNS") %>%
+  group_by(species) %>%
+  summarize(maxl = max(length))
+```
+... gives:
+```
+Joining, by = c("country", "vessel", "cruise", "year")
+# Source:   lazy query [?? x 2]
+# Database: OraConnection
+  species  maxl
+  <chr>   <dbl>
+1 HER      40  
+2 LUM      49.5
+3 MAC      48.5
+4 SAL      80  
+5 WHB      41  
+Warning message:
+Missing values are always removed in SQL.
+Use `MAX(x, na.rm = TRUE)` to silence this warning 
+```
+
+I.e. in the above code we let the Oracle do all the work for us. Even the output is still just from the query - just showing the top rows, which in this specific case is all of it. If one where to use the above analysis further within R one would just call `collect`. One could however also use the query further within Oracle with some additional sql-acrobatics via the dplyr-package.
+
+Lets do some more plots:
 
 ```r
 nap_tbl(con, "acoustic") %>% 
