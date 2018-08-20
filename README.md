@@ -5,7 +5,7 @@ To establish a connection via R you need to have a a specific back-end for the d
 Installing:
 
 ```r
-devtools::install_github("fishvice/napr")
+devtools::install_github("fishvice/napr", dependencies = FALSE)
 ```
 
 Shaking hands with North-Atlantic Pelagic Ecosystem Surveys data
@@ -22,6 +22,7 @@ con <- nap_connect(username = "youshouldknow", password = "youshouldknow")
 
 Generic access to tables can then be established via:
 ```r
+nap_tbl(con, "survey")
 nap_tbl(con, "logbook")
 nap_tbl(con, "catch")
 nap_tbl(con, "acoustic")
@@ -29,10 +30,13 @@ nap_tbl(con, "biology")
 nap_tbl(con, "hydrography")
 nap_tbl(con, "plankton")
 nap_tbl(con, "acousticvalues")
+nap_tbl(con, "species")
 ...
 ```
 
-There is also a convenient call for the logbook and catch, via the functions nap_logbook and nap_catch.
+There is also a convenient call for the logbook called nap_logbook and more may be added at later stages.
+
+The nap_lobgook function converts the varible lon, lat, day, hour and min from character to numeric values. A function arguement create_date is also available and if set true (default is false) it returns a datetime-variable (called date) from the time associated varibles when "possible".
 
 An example for generating a query:
 ```r

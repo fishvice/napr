@@ -1,10 +1,31 @@
-#' @export
-nap_from_mar_biology <- function(con, Leidangur) {
+# Multpelt
 
-  con <- connect_mar()
-  IDS <-
+#' @export
+nap_from_mar_biology <- function(con, cruise, sttype) {
+
+  con <- mar::connect_mar()
+  st <-
     mar::lesa_stodvar(con) %>%
-    dplyr::filter(leidangur == Leidangur) %>%
+    dplyr::filter(leidangur %in% cruise)
+
+  prefix <-
+    st %>%
+    select(cruise = leidangur,
+           # should replace skip with vessel
+           skip,
+           station = stod,
+           year = ar) %>%
+    collect(n = Inf) %>%
+    mutate(country = "IS",
+           vessel = skip,
+           sttype = sttype,
+           dummy = -999) %>%
+    select(country, skip, cruise, station, sttype, year)
+
+
+  IDS <-
+    st %>%
+    select(synis_id) %>%
     dplyr::collect(n = Inf) %>%
     dplyr::pull(synis_id)
 
@@ -29,6 +50,7 @@ nap_from_mar_biology <- function(con, Leidangur) {
     # a security blanket
     dplyr::group_by(synis_id, tegund, kyn, kynthroski, lengd) %>%
     dplyr::summarise(n.lengdir = sum(fjoldi)) %>%
+    dplyr::ungroup() %>%
     dplyr::full_join(kv2) %>%
     dplyr::mutate(n = ifelse(is.na(n.kvarnir), n.lengdir, n.lengdir - n.kvarnir)) %>%
     # quickfix
@@ -38,8 +60,23 @@ nap_from_mar_biology <- function(con, Leidangur) {
     tidyr::uncount(n) %>%
     dplyr::mutate(id = 3) %>%
     dplyr::bind_rows(kv %>%
-                mutate(id = 1))
+                mutate(id = 1)) %>%
+    select(species = tegund,
+           length = lengd,
+           weight = oslaegt,
+           ageotolith = aldur,
+           sex = kyn,
+           maturation = kynthroski,
+           stomachwt = magi) %>%
+    mutate(dummy = -999)
+
+  biology <-
+    prefix %>%
+    dplyr::left_join(biology) %>%
+
 
   return(biology)
 
 }
+
+
