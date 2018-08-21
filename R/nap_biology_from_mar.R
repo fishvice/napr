@@ -1,7 +1,8 @@
 # Multpelt
 
-#' @export
-nap_from_mar_biology <- function(con, cruise, sttype) {
+nap_biology_from_mar <- function(con, cruise, sttype) {
+
+  # NOTE: Function not yet complete
 
   con <- mar::connect_mar()
   st <-
@@ -72,7 +73,7 @@ nap_from_mar_biology <- function(con, cruise, sttype) {
 
   biology <-
     prefix %>%
-    dplyr::left_join(biology) %>%
+    dplyr::left_join(biology)
 
 
   return(biology)
