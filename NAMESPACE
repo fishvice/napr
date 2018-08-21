@@ -3,7 +3,6 @@
 export(nap_acoustic)
 export(nap_catch)
 export(nap_connect)
-export(nap_from_mar_biology)
 export(nap_logbook)
 export(nap_survey)
 export(nap_tbl)
